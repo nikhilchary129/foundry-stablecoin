@@ -64,3 +64,10 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+## intro
+1. relativity stability : anchored or pegged
+    1. chainlink price feed
+    2. set function to exchange eth&btc forcoin
+2. stablity mechanism (miniting/burning): Algorithmic (decentralized)
+3. collateral: exogenous (crypto)

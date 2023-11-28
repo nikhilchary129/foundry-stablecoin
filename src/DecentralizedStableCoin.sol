@@ -23,6 +23,7 @@
 
 pragma solidity ^0.8.19;
 
-contract Counter {
+contract  s{
+    
    
 }
