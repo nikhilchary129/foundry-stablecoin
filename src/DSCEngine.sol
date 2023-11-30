@@ -46,6 +46,7 @@ abstract contract DSCEngine is ReentrancyGuard, IERC20 {
     error DecentralizedStableCoin__TokenNotAllowed();
     error DSCEngine__transferFailed();
     error DSCEngine__HealthFactorBroken(uint256 factor);
+    error DSCEngine__mintFailed();
 
     ///////////////////////////////
     /*   stATE VARIABLE     */
@@ -63,7 +64,7 @@ abstract contract DSCEngine is ReentrancyGuard, IERC20 {
     DecentralizedStableCoin private immutable i_dsc;
 
     ///////////////////////////////
-    /*   stATE VARIABLE     */
+    /*   events   */
     //////////////////////////////
     event CollateralDeposited(address indexed user, address indexed tokenadrress, uint256 indexed amount);
 
@@ -118,6 +119,8 @@ abstract contract DSCEngine is ReentrancyGuard, IERC20 {
     function mintDsc(uint256 amountdscToMint) external moreThanZero(amountdscToMint) nonReentrant {
         s_DSCminted[msg.sender] += amountdscToMint;
         _revertifHealthFactorBroken(msg.sender);
+        bool minted=i_dsc.mint(msg.sender, amountdscToMint);
+        if(!minted) revert DSCEngine__mintFailed();
     }
 
     function burnDsc() external {}
