@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: mit
 
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.0;
 
 
 import {DecentralizedStableCoin} from "../src/DecentralizedStableCoin.sol";
 import {DSCEngine} from "../src/DSCEngine.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.sol";
-import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
+import {ERC20Mock} from "@openzeppelin/contracts/mocks/ERC20Mock.sol";
 
 
 import {Script} from "forge-std/Script.sol";
 
-contract helperconfig is Script {
+contract Helperconfig is Script {
     //get wbtc weth token and their pricefeed
     struct NetworkConfig {
         address wethUsdPriceFeed;
@@ -21,9 +21,18 @@ contract helperconfig is Script {
         address wbtc;
         uint256 deployerkey;
     }
+    uint8 public constant DECIMALS=8;
+   //_bound int256 public constant EH_USD_PRICE=2000e8;
+    int256 public constant WBTC_PRICE=2000e8;
+    int256 public constant WETH_PRICE=1000e8;
+   // int256 public constant EH_WBTC_PRICE
     NetworkConfig public activeNetworkConfig;
+    uint256 public DEFAULT_ANVIL_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
 
-    constructor(){}
+    constructor(){
+        if(block.chainid==11155111) activeNetworkConfig=getSepoliaEthConfig();
+        else activeNetworkConfig=getOrCreateAnvilEthConfig();
+    }
 
     function getSepoliaEthConfig()public view returns(NetworkConfig memory sepoliaNetworkConfig){
 
@@ -35,10 +44,31 @@ contract helperconfig is Script {
             deployerkey: vm.envUint("PRIVATE_KEY")
         });
     }
-    function getOrCreateAnvilEthConfig() public view returns(NetworkConfig memory anvilNetworkConfig){
+
+    function getOrCreateAnvilEthConfig() public  returns(NetworkConfig memory anvilNetworkConfig){
         if(activeNetworkConfig.wethUsdPriceFeed!=address(0) ){
             return activeNetworkConfig;
         }
+        vm.startBroadcast();
+        MockV3Aggregator mockethpricefeed= new MockV3Aggregator(DECIMALS,WETH_PRICE);
+        ERC20Mock mocketh= new ERC20Mock("WETH","WETH",msg.sender,1000e8);
+
+        MockV3Aggregator mockbthpricefeed= new MockV3Aggregator(DECIMALS,WbTH_PRICE);
+        ERC20Mock mockbth= new ERC20Mock("WBTH","WBTH",msg.sender,2000e8);
+
+        vm.stopBroadcast();
+
+        return NetworkConfig({
+            wethUsdPriceFeed: address(mockethpricefeed),
+            wbtcUsdPriceFeed:address( mockbthpricefeed),
+            weth:address (mocketh),
+            wbtc:address( mockbth),
+            deployerkey: DEFAULT_ANVIL_KEY
+
+        });
+
     }
     
+        
+      
 }
