@@ -53,7 +53,7 @@ contract Helperconfig is Script {
         MockV3Aggregator mockethpricefeed= new MockV3Aggregator(DECIMALS,WETH_PRICE);
         ERC20Mock mocketh= new ERC20Mock("WETH","WETH",msg.sender,1000e8);
 
-        MockV3Aggregator mockbthpricefeed= new MockV3Aggregator(DECIMALS,WbTH_PRICE);
+        MockV3Aggregator mockbthpricefeed= new MockV3Aggregator(DECIMALS,WBTC_PRICE);
         ERC20Mock mockbth= new ERC20Mock("WBTH","WBTH",msg.sender,2000e8);
 
         vm.stopBroadcast();

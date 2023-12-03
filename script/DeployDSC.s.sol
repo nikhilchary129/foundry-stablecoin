@@ -11,7 +11,7 @@ import {Script} from "forge-std/Script.sol";
 contract DeployDSC is Script{
     address[] public tokens;
     address[] public pricefeed;
-    function run() external returns( DecentralizedStableCoin,DSCEngine){
+    function run() external returns( DecentralizedStableCoin,DSCEngine,Helperconfig){
       
        
 
@@ -28,12 +28,12 @@ contract DeployDSC is Script{
         
         vm.startBroadcast(deployerkey);
         DecentralizedStableCoin dsc= new DecentralizedStableCoin();
-        DSCEngine engine= new DSCEngine(tokens,pricefeed,dsc);
+        DSCEngine engine= new DSCEngine(tokens,pricefeed,address(dsc));
 
         dsc.transferOwnership(address(engine));
         vm.stopBroadcast();
 
-        return  (dsc,engine);
+        return  (dsc,engine,config);
     }
 }
 

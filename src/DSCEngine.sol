@@ -30,14 +30,14 @@ pragma solidity ^0.8.19;
  */
 
 import {ERC20Burnable, ERC20} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 //lib/openzeppelin-contracts
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {DecentralizedStableCoin} from "../src/DecentralizedStableCoin.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-abstract contract DSCEngine is ReentrancyGuard, IERC20 {
+contract DSCEngine is ERC20("DecentralizedStableCoin","DSC"){
     ///////////////////////////////
     /*   error     */
     //////////////////////////////
@@ -105,11 +105,11 @@ abstract contract DSCEngine is ReentrancyGuard, IERC20 {
         external
         moreThanZero(amountCollateral)
         isAllowedToken(tokenCollateralAddress)
-        nonReentrant
+        
     {
         s_CollateralDeposited[msg.sender][tokenCollateralAddress] += amountCollateral;
         emit CollateralDeposited(msg.sender, tokenCollateralAddress, amountCollateral);
-        bool success = IERC20(tokenCollateralAddress).transferFrom(msg.sender, address(this), amountCollateral);
+        bool success = ERC20(tokenCollateralAddress).transferFrom(msg.sender, address(this), amountCollateral);
         if (!success) revert DSCEngine__transferFailed();
     }
 
@@ -117,7 +117,7 @@ abstract contract DSCEngine is ReentrancyGuard, IERC20 {
 
     function redeemCollateralForDsc() external {}
 
-    function mintDsc(uint256 amountdscToMint) external moreThanZero(amountdscToMint) nonReentrant {
+    function mintDsc(uint256 amountdscToMint) external moreThanZero(amountdscToMint) {
         s_DSCminted[msg.sender] += amountdscToMint;
         _revertifHealthFactorBroken(msg.sender);
         bool minted=i_dsc.mint(msg.sender, amountdscToMint);
@@ -159,8 +159,7 @@ abstract contract DSCEngine is ReentrancyGuard, IERC20 {
     }
 
     function _healthfactor(address user) private view returns (uint256) {
-        //total dscminted
-        //total collateral value
+        
         (uint256 totalDscMinted, uint256 totalCollateralValue) = _getAccountInformation(user);
         uint256 totalCollateralValueAdjusted = (totalCollateralValue * LIQUIDATION_THRESHOULD) / 100;
 
