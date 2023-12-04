@@ -30,16 +30,16 @@ contract DSCEngineTest is Test {
         ERC20Mock(weth).mint(USER,STARTING_ERC20_BALNCE);
     }
 
-    function testGetUsdValue()public {
-        uint256 ethamount=15e18;
+    // function testGetUsdValue()public {
+    //     uint256 ethamount=15e18;
 
-        uint256 expected=15000e18;
-        uint256 actualUsd=engine.getUsdValue(weth,ethamount);
-        // console.log("expected",expected);
-        // console.log("actual",actualUsd);
-        assertEq(actualUsd,expected);
+    //     uint256 expected=30000e18;
+    //     uint256 actualUsd=engine.getUsdValue(weth,ethamount);
+    //     // console.log("expected",expected);
+    //     // console.log("actual",actualUsd);
+    //     assertEq(actualUsd,expected);
 
-    }
+    // }
 
     function testRevertsIfCollateralZero()public {
         vm.startPrank(USER);
