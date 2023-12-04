@@ -157,7 +157,10 @@ contract DSCEngine is ERC20("DecentralizedStableCoin", "DSC") {
         _revertifHealthFactorBroken(msg.sender);
     }
 
-    function liqudate() external {}
+    function liqudate(address collateral,address user,uint256 debtToCover) external moreThanZero(debtToCover) {
+
+
+    }
 
     function getHealthFactor() external {}
 
@@ -189,7 +192,7 @@ contract DSCEngine is ERC20("DecentralizedStableCoin", "DSC") {
         return (totalDSC, totalCollateral);
     }
 
-    function _healthfactor(address user) private view returns (uint256) {
+    function _healthfactor(address user) private view returns (uint256) { 
         (uint256 totalDscMinted, uint256 totalCollateralValue) = _getAccountInformation(user);
         uint256 totalCollateralValueAdjusted = (totalCollateralValue * LIQUIDATION_THRESHOULD) / 100;
 
